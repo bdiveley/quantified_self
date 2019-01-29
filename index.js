@@ -22,7 +22,23 @@ app.get('/api/v1/foods', (request, response) => {
     });
 });
 
-app.post('/api/v1/foods', (request, response) => {
+app.get('/api/v1/foods/:id', (request, response) => {
+  database('foods').where('id', request.params.id).select()
+    .then(foods => {
+      if (foods.length) {
+        response.status(200).json(foods);
+      } else {
+        response.status(404).json({
+          error: `Could not find food with id ${request.params.id}`
+        });
+      }
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
+
+app.patch('/api/v1/foods/:id', (request, response) => {
   const food = request.body;
 
   for (let requiredParameter of ['name', 'calories']) {
@@ -33,14 +49,48 @@ app.post('/api/v1/foods', (request, response) => {
     }
   }
 
-  database('foods').insert(food, 'id')
+  database('foods').where('id', request.params.id).update(food)
     .then(food => {
       response.status(201).json({ "food": request.body })
     })
     .catch(error => {
       response.status(400).json({ error });
     });
-});
+  });
+
+  app.post('/api/v1/foods', (request, response) => {
+    const food = request.body;
+
+    for (let requiredParameter of ['name', 'calories']) {
+      if (!food[requiredParameter]) {
+        return response
+          .status(422)
+          .send({ error: `Expected format: { title: <String>, author: <String> }. You're missing a "${requiredParameter}" property.` });
+      }
+    }
+
+    database('foods').insert(food, 'id')
+      .then(food => {
+        response.status(201).json({ "food": request.body })
+      })
+      .catch(error => {
+        response.status(400).json({ error });
+      });
+  });
+
+  app.delete('/api/v1/foods/:id', (request, response) => {
+      database('foods').where('id', request.params.id).del()
+      .then(foods => {
+        if (foods == 1) {
+          response.status(204).json({success: true});
+        } else {
+          response.status(404).json({ error });
+        }
+      })
+      .catch((error) => {
+        response.status(500).json({ error });
+      });
+  });
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
