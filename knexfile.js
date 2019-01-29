@@ -5,10 +5,13 @@ module.exports = {
   development: {
     client: 'pg',
     connection: 'postgres://localhost/quantified_self',
-      migrations: {
-        directory: './db/migrations'
-      },
-    userNullAsDefault: true
+    migrations: {
+      directory: './db/migrations'
+    },
+    seeds: {
+      directory: './db/seeds/dev'
+    },
+    useNullAsDefault: true
   },
 
   staging: {
@@ -30,7 +33,7 @@ module.exports = {
   production: {
     client: 'postgresql',
     connection: {
-      database: 'my_db',
+      database: 'quantified_self',
       user:     'username',
       password: 'password'
     },
