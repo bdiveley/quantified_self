@@ -3,13 +3,8 @@
   "version": "1.0.0",
   "description": "https://github.com/bdiveley/quantified_self/projects/1",
   "main": "index.js",
-  "directories": {
-    "lib": "lib",
-    "test": "test"
-  },
   "scripts": {
-    "start": "webpack",
-    "test": "./node_modules/mocha/bin/mocha --require babel-core/register test"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -31,6 +26,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
     "mocha": "^5.2.0"
   }
 }

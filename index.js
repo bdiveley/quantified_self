@@ -50,13 +50,15 @@ app.patch('/api/v1/foods/:id', (request, response) => {
   }
 
   database('foods').where('id', request.params.id).update(food)
-    .then(food => {
-      response.status(201).json({ "food": request.body })
+    .then(foods => {
+      if (foods == 1) {
+        response.status(201).json({"food": food });
+      }
     })
-    .catch(error => {
+    .catch((error) => {
       response.status(400).json({ error });
     });
-  });
+});
 
   app.post('/api/v1/foods', (request, response) => {
     const food = request.body;
@@ -95,3 +97,5 @@ app.patch('/api/v1/foods/:id', (request, response) => {
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
+
+module.exports = app;
