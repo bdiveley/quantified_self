@@ -86,6 +86,7 @@ app.patch('/api/v1/foods/:id', (request, response) => {
         if (foods == 1) {
           response.status(204).json({success: true});
         } else {
+          eval(pry.it)
           response.status(404).json({ error });
         }
       })

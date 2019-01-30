@@ -27,6 +27,14 @@ describe('API Routes', () => {
       });
   });
 
+  after((done) => {
+    database.seed.run()
+      .then(() => done())
+      .catch(error => {
+        throw error;
+      });
+  });
+
   describe('GET /api/v1/foods', () => {
    it('should return all of the foods', done => {
       chai.request(server)
@@ -35,7 +43,6 @@ describe('API Routes', () => {
           response.should.have.status(200);
           response.should.be.json;
           response.body.should.be.a('array');
-          response.body.length.should.equal(1);
           response.body[0].should.have.property('name');
           response.body[0].name.should.equal('Orange');
           response.body[0].should.have.property('calories');
@@ -63,7 +70,7 @@ describe('API Routes', () => {
     });
     it('should return 404 if id does not exist', done => {
       chai.request(server)
-       .get('/api/v1/foods/10')
+       .get('/api/v1/foods/100000000')
        .end((err, response) => {
          response.should.have.status(404);
          done();
@@ -91,7 +98,7 @@ describe('API Routes', () => {
     });
     it('should return 404 if datatypes incorrect', done => {
       chai.request(server)
-       .patch('/api/v1/foods/10')
+       .patch('/api/v1/foods/10000000')
        .send({
          name: "Apple",
          calories: 200
@@ -134,7 +141,8 @@ describe('API Routes', () => {
        .get('/api/v1/foods')
        .end((err, response) => {
          response.body.should.be.a('array');
-         response.body.length.should.equal(2);
+         response.body[response.body.length-1].name.should.equal('Egg');
+         response.body[response.body.length-1].calories.should.equal(80);
          done();
        });
     });
@@ -152,6 +160,7 @@ describe('API Routes', () => {
     });
   });
 
+// sad path continues to fail; come back to this failing text
   describe('DELETE /api/v1/foods/1', () => {
     it('should delete a specific food', done => {
       chai.request(server)
@@ -162,7 +171,6 @@ describe('API Routes', () => {
       chai.request(server)
         .get('/api/v1/foods/1')
         .end((err, response) => {
-          eval(pry.it)
           response.should.have.status(404);
         done();
         });
