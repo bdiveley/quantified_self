@@ -46,7 +46,7 @@ describe('API Routes', () => {
     })
 
   describe('GET api/v1/foods/1', () => {
-   it('should return one specific food', done => {
+    it('should return one specific food', done => {
       chai.request(server)
         .get('/api/v1/foods/1')
         .end((err, response) => {
@@ -60,20 +60,20 @@ describe('API Routes', () => {
           response.body[0].calories.should.equal(100);
           done();
         });
-      });
+    });
     it('should return 404 if id does not exist', done => {
-       chai.request(server)
-         .get('/api/v1/foods/10')
-         .end((err, response) => {
-           response.should.have.status(404);
-           done();
-         });
-      });
+      chai.request(server)
+       .get('/api/v1/foods/10')
+       .end((err, response) => {
+         response.should.have.status(404);
+         done();
+       });
+    });
   });
 
   describe('PATCH /api/v1/foods/1', () => {
-   it('should update an existing food', done => {
-     chai.request(server)
+    it('should update an existing food', done => {
+      chai.request(server)
        .patch('/api/v1/foods/1')
        .send({
          name: "Apple",
@@ -87,21 +87,21 @@ describe('API Routes', () => {
          response.body.food.name.should.equal('Apple');
          response.body.food.calories.should.equal(200);
        });
-         done();
+        done();
+    });
+    it('should return 404 if datatypes incorrect', done => {
+      chai.request(server)
+       .patch('/api/v1/foods/10')
+       .send({
+         name: "Apple",
+         calories: 200
+       })
+        .end((err, response) => {
+          response.should.have.status(400);
+        });
+        done();
      });
-     it('should return 404 if datatypes incorrect', done => {
-       chai.request(server)
-         .patch('/api/v1/foods/10')
-         .send({
-           name: "Apple",
-           calories: 200
-         })
-          .end((err, response) => {
-            response.should.have.status(400);
-          });
-          done();
-       });
-   it('should return 422 if patch does not include all attributes', done => {
+    it('should return 422 if patch does not include all attributes', done => {
      chai.request(server)
        .patch('/api/v1/foods/1')
        .send({
@@ -114,40 +114,58 @@ describe('API Routes', () => {
      });
    });
 
+  describe('POST /api/v1/foods', () => {
+    it('should create a new food', done => {
+      chai.request(server)
+       .post('/api/v1/foods')
+       .send({
+         name: "Egg",
+         calories: 80
+       })
+       .end((err, response) => {
+         response.should.have.status(201);
+         response.should.be.json;
+         response.body.should.be.a('object');
+         response.body.should.have.property('food');
+         response.body.food.name.should.equal('Egg');
+         response.body.food.calories.should.equal(80);
+       });
+      chai.request(server)
+       .get('/api/v1/foods')
+       .end((err, response) => {
+         response.body.should.be.a('array');
+         response.body.length.should.equal(2);
+         done();
+       });
+    });
 
-  // describe('POST /api/v1/papers', () => {
-  //  it('should create a new paper', done => {
-  //    chai.request(server)
-  //    // Notice the change in the verb
-  //      .post('/api/v1/papers')
-  //      // Here is the information sent in the body or the request
-  //      //You can pass in the wrong datatype and test that sad path
-  //      .send({
-  //        title: 1,
-  //        author: 'Amy'
-  //      })
-  //      .end((err, response) => {
-  //        // Different status here
-  //        response.should.have.status(201);
-  //        response.body.should.be.a('object');
-  //        response.body.should.have.property('id');
-  //        done();
-  //      });
-  //  });
+    it('should return 422 is all attributes are not included in request', done => {
+      chai.request(server)
+       .post('/api/v1/foods')
+       .send({
+         calories: 80
+       })
+       .end((err, response) => {
+         response.should.have.status(422);
+       done();
+       });
+    });
+  });
 
-   // it('should not create a record with missing data', done => {
-   //  chai.request(server)
-   //    .post('/api/v1/papers')
-   //    .send({
-   //      title: 'Waterfall Wow' //missing author property
-   //    })
-   //    .end((err, response) => {
-   //      response.should.have.status(422);
-   //      response.body.error.should.equal(
-   //        `Expected format: { title: <String>, author: <String> }. You're missing a "author" property.`
-   //      );
-   //      done();
-   //    });
-   //  });
-//  });
+  describe('DELETE /api/v1/foods/1', () => {
+    it('should delete a specific food', done => {
+      chai.request(server)
+        .delete('/api/v1/foods/1')
+        .end((err, response) => {
+          response.should.have.status(204);
+      });
+      chai.request(server)
+        .get('/api/v1/foods/1')
+        .end((err, response) => {
+          eval(pry.it)
+          response.should.have.status(404);
+        done();
+        });
+    });
+  });
 });
