@@ -70,7 +70,6 @@ app.patch('/api/v1/foods/:id', (request, response) => {
           .send({ error: `Expected format: { title: <String>, author: <String> }. You're missing a "${requiredParameter}" property.` });
       }
     }
-
     database('foods').insert(food, 'id')
       .then(food => {
         response.status(201).json({ "food": request.body })
@@ -81,18 +80,17 @@ app.patch('/api/v1/foods/:id', (request, response) => {
   });
 
   app.delete('/api/v1/foods/:id', (request, response) => {
-      database('foods').where('id', request.params.id).del()
-      .then(foods => {
-        if (foods == 1) {
-          response.status(204).json({success: true});
-        } else {
-          eval(pry.it)
-          response.status(404).json({ error });
-        }
-      })
-      .catch((error) => {
-        response.status(500).json({ error });
-      });
+    database('foods').where('id', request.params.id).del()
+    .then(food => {
+      if (foods == 1) {
+        response.status(204).json({success: true});
+      } else {
+        response.status(404).json({ error });
+      }
+    })
+    .catch((error) => {
+      response.status(500).json({ error });
+    });
   });
 
   app.get('/api/v1/meals', (request, response) => {
