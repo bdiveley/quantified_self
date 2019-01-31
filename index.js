@@ -95,6 +95,39 @@ app.patch('/api/v1/foods/:id', (request, response) => {
       });
   });
 
+  app.get('/api/v1/meals', (request, response) => {
+    database('meals').select(['meals.id AS meal_id', 'meals.name AS meal_name', 'foods.* AS foods']).join('meal_foods', 'meals.id', '=', 'meal_foods.meal_id').join('foods', 'foods.id', '=', 'meal_foods.food_id')
+      .then((meals) => {
+        var breakfast = {"id": 1, "name": "Breakfast", "foods": []}
+        var lunch = {"id": 2, "name": "Lunch", "foods": []}
+        var dinner = {"id": 3, "name": "Dinner", "foods": []}
+        var snack = {"id": 4, "name": "Snack", "foods": []}
+        meals.forEach(function(m){
+          if(m.meal_id == 1) {
+            result = { "id": m.id, "name": m.name, "calories": m.calories }
+            breakfast.foods.push(result)
+          }
+          else if(m.meal_id == 2) {
+            result = { "id": m.id, "name": m.name, "calories": m.calories }
+            lunch.foods.push(result)
+          }
+          else if(m.meal_id == 3) {
+            result = { "id": m.id, "name": m.name, "calories": m.calories }
+            dinner.foods.push(result)
+          }
+          else {
+            result = { "id": m.id, "name": m.name, "calories": m.calories }
+            snack.foods.push(result)
+          }
+        })
+        response.status(200).json([breakfast, lunch, dinner, snack]);
+      })
+      .catch((error) => {
+        response.status(500).json({ error });
+      });
+  });
+
+
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });

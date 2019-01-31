@@ -160,7 +160,6 @@ describe('API Routes', () => {
     });
   });
 
-// sad path continues to fail; come back to this failing text
   describe('DELETE /api/v1/foods/1', () => {
     it('should delete a specific food', done => {
       chai.request(server)
