@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const pry  = require('pryjs')
+const pry  = require('pryjs');
+const util = require('util');
 
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
@@ -62,7 +63,6 @@ app.patch('/api/v1/foods/:id', (request, response) => {
 
   app.post('/api/v1/foods', (request, response) => {
     const food = request.body;
-
     for (let requiredParameter of ['name', 'calories']) {
       if (!food[requiredParameter]) {
         return response
@@ -145,6 +145,58 @@ app.patch('/api/v1/foods/:id', (request, response) => {
       });
   });
 
+  app.post('/api/v1/meals/:meal_id/foods/:food_id', (request, response) => {
+    database('meal_foods').insert({'food_id': request.params.food_id, 'meal_id': request.params.meal_id, 'date_id': request.query.date })
+      .then(date => {
+        response.status(201).json({ "message": "Successfully added food to meal"})
+      })
+      .catch(error => {
+        response.status(400).json({ error });
+      });
+  });
+
+  app.get('/api/v1/mealfoods', (request, response) => {
+    database('meal_foods').select()
+      .then(meal_foods => {
+        response.status(201).json({ meal_foods})
+      })
+      .catch(error => {
+        response.status(400).json({ error });
+      });
+  });
+
+  app.get('/api/v1/dates', (request, response) => {
+    database('dates').select()
+      .then(dates => {
+        response.status(201).json({ dates})
+      })
+      .catch(error => {
+        response.status(400).json({ error });
+      });
+  });
+
+  app.post('/api/v1/dates', (request, response) => {
+    const request_date = request.body;
+      if(!request_date.day) {
+        return response
+          .status(422)
+          .send({ error: "You're missing a day property." });
+      }
+    database('dates').where({day: request_date.day}, 'id')
+      .then(date => {
+        if(date.length == 0){
+          database('dates').insert({"day": request_date.day}, 'id')
+          .then(date_id => {
+            response.status(201).json({'id': date_id[0]})
+          });
+        } else {
+          response.status(200).json({'id': date[0].id})
+          }
+        })
+      .catch(error => {
+        response.status(400).json({ error });
+      });
+  });
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
