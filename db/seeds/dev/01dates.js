@@ -1,10 +1,14 @@
 exports.seed = function(knex, Promise) {
-  return knex('foods').del()
+  return knex.raw('TRUNCATE dates RESTART IDENTITY CASCADE')
+
     .then(() => {
       return Promise.all([
-        knex('foods').insert({
-          id: 1, name: 'Orange', calories: 100
-        })
+        knex('dates').insert([
+          { day: '2019-01-01' },
+          { day: '2019-01-02' },
+          { day: '2019-01-03' },
+          { day: '2019-01-04' }
+        ])
         .then(() => console.log('Seeding complete!'))
         .catch(error => console.log(`Error seeding data: ${error}`))
       ])
