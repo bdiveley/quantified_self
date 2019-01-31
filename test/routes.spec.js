@@ -254,8 +254,7 @@ describe('GET /api/v1/meals/:meal_id/foods', () => {
       .end((err, response) => {
       response.should.have.status(201);
       response.body.should.be.a('object');
-      response.body.should.have.property('message');
-      response.body.message.should.equal("Your date has been added to the database");
+      response.body.should.have.property('id');
       done();
       });
     });
@@ -266,10 +265,9 @@ describe('GET /api/v1/meals/:meal_id/foods', () => {
        day: '2019-01-01'
      })
      .end((err, response) => {
-     response.should.have.status(201);
+     response.should.have.status(200);
      response.body.should.be.a('object');
-     response.body.should.have.property('message');
-     response.body.message.should.equal("Your date exists in the database");
+     response.body.should.have.property('id');
      done();
      });
    });

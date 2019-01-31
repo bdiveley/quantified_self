@@ -187,10 +187,10 @@ app.patch('/api/v1/foods/:id', (request, response) => {
         if(date.length == 0){
           database('dates').insert({"day": request_date.day}, 'id')
           .then(date_id => {
-            response.status(201).json({'message': "Your date has been added to the database"})
+            response.status(201).json({'id': date_id[0]})
           });
         } else {
-          response.status(201).json({'message': "Your date exists in the database"})
+          response.status(200).json({'id': date[0].id})
           }
         })
       .catch(error => {
