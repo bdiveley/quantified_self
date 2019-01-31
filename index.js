@@ -39,22 +39,6 @@ app.get('/api/v1/foods/:id', (request, response) => {
     });
 });
 
-app.get('/api/v1/mealfoods/:id', (request, response) => {
-  database('meal_foods').where('id', request.params.id).select()
-    .then(mealfoods => {
-      if (mealfoods.length) {
-        response.status(200).json(mealfoods[0]);
-      } else {
-        response.status(404).json({
-          error: `Could not find meal entry with id ${request.params.id}`
-        });
-      }
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
-});
-
 app.patch('/api/v1/foods/:id', (request, response) => {
   const food = request.body;
 
@@ -109,37 +93,40 @@ app.delete('/api/v1/foods/:id', (request, response) => {
 });
 
 app.get('/api/v1/meals', (request, response) => {
-  database('meals').select(['meals.id AS meal_id', 'meals.name AS meal_name', 'foods.* AS foods']).join('meal_foods', 'meals.id', '=', 'meal_foods.meal_id').join('foods', 'foods.id', '=', 'meal_foods.food_id')
+  database('meals')
+  .select(['meals.id AS meal_id', 'meals.name AS meal_name', 'foods.* AS foods'])
+  .join('meal_foods', 'meals.id', '=', 'meal_foods.meal_id')
+  .join('foods', 'foods.id', '=', 'meal_foods.food_id')
     .then((meals) => {
       var breakfast = {"id": 1, "name": "Breakfast", "foods": []}
       var lunch = {"id": 2, "name": "Lunch", "foods": []}
       var dinner = {"id": 3, "name": "Dinner", "foods": []}
       var snack = {"id": 4, "name": "Snack", "foods": []}
       meals.forEach(function(m){
-        // change to switch statement
-        if(m.meal_id == 1) {
+        switch(m.meal_id){
+        case 1:
           result = { "id": m.id, "name": m.name, "calories": m.calories }
           breakfast.foods.push(result)
-        }
-        else if(m.meal_id == 2) {
+          break;
+        case 2:
           result = { "id": m.id, "name": m.name, "calories": m.calories }
           lunch.foods.push(result)
-        }
-        else if(m.meal_id == 3) {
+          break;
+        case 3:
           result = { "id": m.id, "name": m.name, "calories": m.calories }
           dinner.foods.push(result)
-        }
-        else {
+          break;
+        default:
           result = { "id": m.id, "name": m.name, "calories": m.calories }
           snack.foods.push(result)
-        }
-      })
+          }
+        })
       response.status(200).json([breakfast, lunch, dinner, snack]);
     })
     .catch((error) => {
       response.status(500).json({ error });
     });
-});
+  });
 
 app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
   database('meals')
@@ -170,6 +157,20 @@ app.post('/api/v1/meals/:meal_id/foods/:food_id', (request, response) => {
     });
 });
 
+app.delete('/api/v1/meals/:meal_id/foods/:food_id', (request, response) => {
+  database('meal_foods').where('food_id', request.params.food_id).del()
+  .then(foods => {
+    if (foods == 1) {
+      response.status(204).json({success: true});
+    } else {
+      response.status(404).json({ error });
+    }
+  })
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
+});
+
 app.get('/api/v1/mealfoods', (request, response) => {
   database('meal_foods').select()
     .then(meal_foods => {
@@ -177,6 +178,22 @@ app.get('/api/v1/mealfoods', (request, response) => {
     })
     .catch(error => {
       response.status(400).json({ error });
+    });
+});
+
+app.get('/api/v1/mealfoods/:id', (request, response) => {
+  database('meal_foods').where('id', request.params.id).select()
+    .then(mealfoods => {
+      if (mealfoods.length) {
+        response.status(200).json(mealfoods[0]);
+      } else {
+        response.status(404).json({
+          error: `Could not find meal entry with id ${request.params.id}`
+        });
+      }
+    })
+    .catch(error => {
+      response.status(500).json({ error });
     });
 });
 
@@ -213,19 +230,7 @@ app.post('/api/v1/dates', (request, response) => {
     });
 });
 
-app.delete('/api/v1/meals/:meal_id/foods/:food_id', (request, response) => {
-  database('meal_foods').where('food_id', request.params.food_id).del()
-  .then(foods => {
-    if (foods == 1) {
-      response.status(204).json({success: true});
-    } else {
-      response.status(404).json({ error });
-    }
-  })
-  .catch((error) => {
-    response.status(500).json({ error });
-  });
-});
+
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
