@@ -220,4 +220,26 @@ describe('GET /api/v1/meals/:meal_id/foods', () => {
       });
     });
   })
+
+  describe('POST /api/v1/meals/:meal_id/foods/:food_id', () => {
+   it('should successfully create a new MealFood resource', done => {
+      chai.request(server)
+      .post('/api/v1/meals/1/foods/1?date=1')
+      .end((err, response) => {
+        response.should.have.status(201);
+        response.body.should.be.a('object');
+        response.body.should.have.property('message');
+        response.body.message.should.equal("Successfully added Orange to Breakfast");
+        done();
+      });
+    });
+  it('should not  create a new MealFood resource if food_id does not exist', done => {
+     chai.request(server)
+     .post('/api/v1/meals/1/foods/10000?date=100')
+     .end((err, response) => {
+       response.should.have.status(400);
+       done();
+     });
+   });
+  });
 });
