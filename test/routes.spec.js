@@ -272,4 +272,20 @@ describe('GET /api/v1/meals/:meal_id/foods', () => {
      });
    });
   });
+
+  describe('DELETE /api/v1/meals/:meal_id/foods/:food_id', () => {
+   it('should delete a specific food from a meal entry', done => {
+     chai.request(server)
+       .delete('/api/v1/meals/1/foods/1')
+       .end((err, response) => {
+         response.should.have.status(204);
+         chai.request(server)
+         .get('/api/v1/mealfoods/1')
+         .end((err, response) => {
+           response.should.have.status(404);
+         done();
+         });
+       });
+     });
+   });
 });
