@@ -229,7 +229,7 @@ describe('GET /api/v1/meals/:meal_id/foods', () => {
         response.should.have.status(201);
         response.body.should.be.a('object');
         response.body.should.have.property('message');
-        response.body.message.should.equal("Successfully added Orange to Breakfast");
+        response.body.message.should.equal("Successfully added food to meal");
         done();
       });
     });
@@ -239,6 +239,38 @@ describe('GET /api/v1/meals/:meal_id/foods', () => {
      .end((err, response) => {
        response.should.have.status(400);
        done();
+     });
+   });
+  });
+
+// write this test for post dates
+  describe('POST /api/v1/dates', () => {
+   it('should successfully create a new Date', done => {
+     chai.request(server)
+      .post('/api/v1/dates')
+      .send({
+        day: '2019-01-05'
+      })
+      .end((err, response) => {
+      response.should.have.status(201);
+      response.body.should.be.a('object');
+      response.body.should.have.property('message');
+      response.body.message.should.equal("Your date has been added to the database");
+      done();
+      });
+    });
+  it('should successfully find an existing Date', done => {
+    chai.request(server)
+     .post('/api/v1/dates')
+     .send({
+       day: '2019-01-01'
+     })
+     .end((err, response) => {
+     response.should.have.status(201);
+     response.body.should.be.a('object');
+     response.body.should.have.property('message');
+     response.body.message.should.equal("Your date exists in the database");
+     done();
      });
    });
   });

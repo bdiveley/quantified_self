@@ -148,13 +148,12 @@ app.patch('/api/v1/foods/:id', (request, response) => {
   app.post('/api/v1/meals/:meal_id/foods/:food_id', (request, response) => {
     database('meal_foods').insert({'food_id': request.params.food_id, 'meal_id': request.params.meal_id, 'date_id': request.query.date })
       .then(date => {
-        response.status(201).json({ "message": "Successfully added Orange to Breakfast"})
+        response.status(201).json({ "message": "Successfully added food to meal"})
       })
       .catch(error => {
         response.status(400).json({ error });
       });
   });
-
 
 //not yet tested
   app.get('/api/v1/mealfoods', (request, response) => {
@@ -167,19 +166,35 @@ app.patch('/api/v1/foods/:id', (request, response) => {
       });
   });
 
-  app.post('/api/v1/dates', (request, response) => {
+// not yet tested
+  app.get('/api/v1/dates', (request, response) => {
     database('dates').select()
-      .then(meal_foods => {
-        // database('dates').where({day: request.query.date}, 'id')
-        // if(date.length == 0){
-        //   database('dates').insert({"day": '2019-02-01'}, 'id')
-        //     .then(date => {
-        //       database('meal_foods').insert({food_id: request.params.food_id, meal_id: request.params.meal_id, date_id: date[0] })
-        //     });
-        // } else {
-        // database('meal_foods').insert({'food_id': request.params.food_id, 'meal_id': request.params.meal_id, 'date_id': date[0].id })
-        response.status(201).json({ meal_foods})
+      .then(dates => {
+        response.status(201).json({ dates})
       })
+      .catch(error => {
+        response.status(400).json({ error });
+      });
+  });
+
+  app.post('/api/v1/dates', (request, response) => {
+    const request_date = request.body;
+      if(!request_date.day) {
+        return response
+          .status(422)
+          .send({ error: "You're missing a day property." });
+      }
+    database('dates').where({day: request_date.day}, 'id')
+      .then(date => {
+        if(date.length == 0){
+          database('dates').insert({"day": request_date.day}, 'id')
+          .then(date_id => {
+            response.status(201).json({'message': "Your date has been added to the database"})
+          });
+        } else {
+          response.status(201).json({'message': "Your date exists in the database"})
+          }
+        })
       .catch(error => {
         response.status(400).json({ error });
       });
