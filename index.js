@@ -155,7 +155,6 @@ app.patch('/api/v1/foods/:id', (request, response) => {
       });
   });
 
-//not yet tested
   app.get('/api/v1/mealfoods', (request, response) => {
     database('meal_foods').select()
       .then(meal_foods => {
@@ -166,7 +165,6 @@ app.patch('/api/v1/foods/:id', (request, response) => {
       });
   });
 
-// not yet tested
   app.get('/api/v1/dates', (request, response) => {
     database('dates').select()
       .then(dates => {
