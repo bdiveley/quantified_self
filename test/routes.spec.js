@@ -211,5 +211,13 @@ describe('GET /api/v1/meals/:meal_id/foods', () => {
         done();
       });
     });
+  it('should return 404 if meal id does not exist', done => {
+    chai.request(server)
+     .get('/api/v1/meals/500/foods')
+     .end((err, response) => {
+       response.should.have.status(404);
+       done();
+      });
+    });
   })
 });
