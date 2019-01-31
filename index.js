@@ -126,6 +126,25 @@ app.patch('/api/v1/foods/:id', (request, response) => {
       });
   });
 
+  app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
+    database('meals')
+      .select(['meals.id AS meal_id', 'meals.name AS meal_name', 'foods.* AS foods'])
+      .join('meal_foods', 'meals.id', '=', 'meal_foods.meal_id')
+      .join('foods', 'foods.id', '=', 'meal_foods.food_id')
+      .where('meal_id', request.params.meal_id)
+      .then((foods) => {
+        var meal = {"id": request.params.meal_id, "name": foods[0].meal_name, "foods": []}
+        foods.forEach(function(f){
+            result = { "id": f.id, "name": f.name, "calories": f.calories }
+            meal.foods.push(result)
+          })
+        response.status(200).json(meal);
+      })
+      .catch((error) => {
+        response.status(404).json("Error: Could not find a meal with that id.");
+      });
+  });
+
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);

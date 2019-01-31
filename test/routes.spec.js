@@ -175,22 +175,41 @@ describe('DELETE /api/v1/foods/1', () => {
    });
  });
 
-  describe('GET /api/v1/meals', () => {
-   it('should return an array of meals with arrays of nested food objects', done => {
-      chai.request(server)
-        .get('/api/v1/meals')
-        .end((err, response) => {
-          response.should.have.status(200);
-          response.should.be.json;
-          response.body.should.be.a('array');
-          response.body.length.should.equal(4);
-          response.body[0].should.have.property('id');
-          response.body[0].should.have.property('name');
-          response.body[0].foods[0].should.have.property('id');
-          response.body[0].foods[0].should.have.property('name');
-          response.body[0].foods[0].should.have.property('calories');
-          done();
-        });
+describe('GET /api/v1/meals', () => {
+ it('should return an array of meals with arrays of nested food objects', done => {
+    chai.request(server)
+      .get('/api/v1/meals')
+      .end((err, response) => {
+        response.should.have.status(200);
+        response.should.be.json;
+        response.body.should.be.a('array');
+        response.body.length.should.equal(4);
+        response.body[0].should.have.property('id');
+        response.body[0].should.have.property('name');
+        response.body[0].foods[0].should.have.property('id');
+        response.body[0].foods[0].should.have.property('name');
+        response.body[0].foods[0].should.have.property('calories');
+        done();
       });
-    })
+    });
+  })
+
+describe('GET /api/v1/meals/:meal_id/foods', () => {
+ it('should return a meal object with an nested array of food objects', done => {
+    chai.request(server)
+      .get('/api/v1/meals/1/foods')
+      .end((err, response) => {
+        response.should.have.status(200);
+        response.should.be.json;
+        response.body.should.be.a('object');
+        response.body.should.have.property('id');
+        response.body.should.have.property('name');
+        response.body.should.have.property('foods');
+        response.body.foods[0].should.have.property('id');
+        response.body.foods[0].should.have.property('name');
+        response.body.foods[0].should.have.property('calories');
+        done();
+      });
+    });
+  })
 });
