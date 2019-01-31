@@ -165,7 +165,6 @@ describe('DELETE /api/v1/foods/1', () => {
    chai.request(server)
      .delete('/api/v1/foods/1')
      .end((err, response) => {
-       eval(pry.it)
        response.should.have.status(204);
        chai.request(server)
        .get('/api/v1/foods/1')

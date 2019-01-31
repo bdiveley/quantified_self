@@ -26,15 +26,18 @@ exports.up = function(knex, Promise) {
       table.increments('id').primary();
       table.integer('food_id').unsigned()
       table.foreign('food_id')
-        .references('foods.id');
+        .references('foods.id')
+        .onDelete('CASCADE');
 
       table.integer('meal_id').unsigned()
       table.foreign('meal_id')
-        .references('meals.id');
+        .references('meals.id')
+        .onDelete('CASCADE');
 
       table.integer('date_id').unsigned()
       table.foreign('date_id')
-        .references('dates.id');
+        .references('dates.id')
+        .onDelete('CASCADE');
 
       table.timestamps(true, true);
     })

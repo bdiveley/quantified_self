@@ -10,7 +10,7 @@ const database = require('knex')(configuration);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', process.env.PORT || 3000);
-app.locals.title = 'Publications';
+app.locals.title = 'Quantified Self';
 
 app.get('/api/v1/foods', (request, response) => {
   database('foods').select()
@@ -81,7 +81,7 @@ app.patch('/api/v1/foods/:id', (request, response) => {
 
   app.delete('/api/v1/foods/:id', (request, response) => {
     database('foods').where('id', request.params.id).del()
-    .then(food => {
+    .then(foods => {
       if (foods == 1) {
         response.status(204).json({success: true});
       } else {
@@ -101,6 +101,7 @@ app.patch('/api/v1/foods/:id', (request, response) => {
         var dinner = {"id": 3, "name": "Dinner", "foods": []}
         var snack = {"id": 4, "name": "Snack", "foods": []}
         meals.forEach(function(m){
+          // change to switch statement
           if(m.meal_id == 1) {
             result = { "id": m.id, "name": m.name, "calories": m.calories }
             breakfast.foods.push(result)
