@@ -98,30 +98,8 @@ app.get('/api/v1/meals', (request, response) => {
   .join('meal_foods', 'meals.id', '=', 'meal_foods.meal_id')
   .join('foods', 'foods.id', '=', 'meal_foods.food_id')
     .then((meals) => {
-      var breakfast = {"id": 1, "name": "Breakfast", "foods": []}
-      var lunch = {"id": 2, "name": "Lunch", "foods": []}
-      var dinner = {"id": 3, "name": "Dinner", "foods": []}
-      var snack = {"id": 4, "name": "Snack", "foods": []}
-      meals.forEach(function(m){
-        switch(m.meal_id){
-        case 1:
-          result = { "id": m.id, "name": m.name, "calories": m.calories }
-          breakfast.foods.push(result)
-          break;
-        case 2:
-          result = { "id": m.id, "name": m.name, "calories": m.calories }
-          lunch.foods.push(result)
-          break;
-        case 3:
-          result = { "id": m.id, "name": m.name, "calories": m.calories }
-          dinner.foods.push(result)
-          break;
-        default:
-          result = { "id": m.id, "name": m.name, "calories": m.calories }
-          snack.foods.push(result)
-          }
-        })
-      response.status(200).json([breakfast, lunch, dinner, snack]);
+      const result = formatData(meals)
+      response.status(200).json(result);
     })
     .catch((error) => {
       response.status(500).json({ error });
@@ -239,31 +217,8 @@ app.get('/api/v1/dates/:day/meals', (request, response) => {
   .where('dates.day', request.params.day)
     .then(date => {
       if (date.length == 1) {
-        eval(pry.it)
-        var breakfast = {"id": 1, "name": "Breakfast", "foods": []}
-        var lunch = {"id": 2, "name": "Lunch", "foods": []}
-        var dinner = {"id": 3, "name": "Dinner", "foods": []}
-        var snack = {"id": 4, "name": "Snack", "foods": []}
-        date.forEach(function(m){
-          switch(m.meal_id){
-          case 1:
-            result = { "id": m.id, "name": m.name, "calories": m.calories }
-            breakfast.foods.push(result)
-            break;
-          case 2:
-            result = { "id": m.id, "name": m.name, "calories": m.calories }
-            lunch.foods.push(result)
-            break;
-          case 3:
-            result = { "id": m.id, "name": m.name, "calories": m.calories }
-            dinner.foods.push(result)
-            break;
-          default:
-            result = { "id": m.id, "name": m.name, "calories": m.calories }
-            snack.foods.push(result)
-            }
-          })
-        response.status(200).json([breakfast, lunch, dinner, snack]);
+        const result = formatData(date)
+        response.status(200).json(result);
       }
       else {
         response.status(401).json({ error });
@@ -274,6 +229,32 @@ app.get('/api/v1/dates/:day/meals', (request, response) => {
     });
   });
 
+const formatData = (data) => {
+  var breakfast = {"id": 1, "name": "Breakfast", "foods": []}
+  var lunch = {"id": 2, "name": "Lunch", "foods": []}
+  var dinner = {"id": 3, "name": "Dinner", "foods": []}
+  var snack = {"id": 4, "name": "Snack", "foods": []}
+    data.forEach(function(m){
+      switch(m.meal_id){
+      case 1:
+        result = { "id": m.id, "name": m.name, "calories": m.calories }
+        breakfast.foods.push(result)
+        break;
+      case 2:
+        result = { "id": m.id, "name": m.name, "calories": m.calories }
+        lunch.foods.push(result)
+        break;
+      case 3:
+        result = { "id": m.id, "name": m.name, "calories": m.calories }
+        dinner.foods.push(result)
+        break;
+      default:
+        result = { "id": m.id, "name": m.name, "calories": m.calories }
+        snack.foods.push(result)
+        }
+      })
+    return [breakfast, lunch, dinner, snack]
+  }
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
