@@ -230,6 +230,49 @@ app.post('/api/v1/dates', (request, response) => {
     });
 });
 
+app.get('/api/v1/dates/:day/meals', (request, response) => {
+  database('dates')
+  .select(['dates.day', 'meals.id AS meal_id', 'meals.name AS meal_name', 'foods.* AS foods'])
+  .join('meal_foods', 'dates.id', '=', 'meal_foods.date_id')
+  .join('meals', 'meals.id', '=', 'meal_foods.meal_id')
+  .join('foods', 'foods.id', '=', 'meal_foods.food_id')
+  .where('dates.day', request.params.day)
+    .then(date => {
+      if (date.length == 1) {
+        eval(pry.it)
+        var breakfast = {"id": 1, "name": "Breakfast", "foods": []}
+        var lunch = {"id": 2, "name": "Lunch", "foods": []}
+        var dinner = {"id": 3, "name": "Dinner", "foods": []}
+        var snack = {"id": 4, "name": "Snack", "foods": []}
+        date.forEach(function(m){
+          switch(m.meal_id){
+          case 1:
+            result = { "id": m.id, "name": m.name, "calories": m.calories }
+            breakfast.foods.push(result)
+            break;
+          case 2:
+            result = { "id": m.id, "name": m.name, "calories": m.calories }
+            lunch.foods.push(result)
+            break;
+          case 3:
+            result = { "id": m.id, "name": m.name, "calories": m.calories }
+            dinner.foods.push(result)
+            break;
+          default:
+            result = { "id": m.id, "name": m.name, "calories": m.calories }
+            snack.foods.push(result)
+            }
+          })
+        response.status(200).json([breakfast, lunch, dinner, snack]);
+      }
+      else {
+        response.status(401).json({ error });
+      }
+    })
+    .catch((error) => {
+      response.status(404).json({ error });
+    });
+  });
 
 
 app.listen(app.get('port'), () => {
