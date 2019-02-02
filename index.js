@@ -216,7 +216,7 @@ app.get('/api/v1/dates/:day/meals', (request, response) => {
   .join('foods', 'foods.id', '=', 'meal_foods.food_id')
   .where('dates.day', request.params.day)
     .then(date => {
-      if (date.length == 1) {
+      if (date.length > 0) {
         const result = formatData(date)
         response.status(200).json(result);
       }
