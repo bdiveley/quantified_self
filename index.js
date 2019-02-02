@@ -87,7 +87,7 @@ app.delete('/api/v1/foods/:id', (request, response) => {
     if (foods == 1) {
       response.status(204).json({success: true});
     } else {
-      response.status(404).json({ error });
+      response.status(404).json({ "error": "That food does not exist." });
     }
   })
   .catch((error) => {
