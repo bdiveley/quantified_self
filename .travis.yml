@@ -3,5 +3,8 @@ node_js:
   - "iojs"
   - "7"
 
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
+  
 services:
 - postgresql
