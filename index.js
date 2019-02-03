@@ -152,15 +152,15 @@ app.delete('/api/v1/meals/:meal_id/foods/:food_id', (request, response) => {
   });
 });
 
-app.get('/api/v1/mealfoods', (request, response) => {
-  database('meal_foods').select()
-    .then(meal_foods => {
-      response.status(201).json({ meal_foods})
-    })
-    .catch(error => {
-      response.status(400).json({ error });
-    });
-});
+// app.get('/api/v1/mealfoods', (request, response) => {
+//   database('meal_foods').select()
+//     .then(meal_foods => {
+//       response.status(201).json({ meal_foods})
+//     })
+//     .catch(error => {
+//       response.status(400).json({ error });
+//     });
+// });
 
 app.get('/api/v1/mealfoods/:id', (request, response) => {
   database('meal_foods').where('id', request.params.id).select()
@@ -211,6 +211,8 @@ app.post('/api/v1/dates', (request, response) => {
     });
 });
 
+
+//
 app.get('/api/v1/dates/meals', (request, response) => {
   database('dates')
   .select(['dates.day', 'meals.id AS meal_id', 'meals.name AS meal_name', 'foods.* AS foods'])
@@ -224,6 +226,7 @@ app.get('/api/v1/dates/meals', (request, response) => {
         currentDay.date = element.day
         currentDay.meals = formatData(element)
         result.push(currentDay)
+        eval(pry.it)
       });
     response.status(200).json(result);
   })
