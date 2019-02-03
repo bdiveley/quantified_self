@@ -211,11 +211,6 @@ app.post('/api/v1/dates', (request, response) => {
     });
 });
 
-
-// Below endpoint keeps hitting the 404 error and won't actually get into the .then() sectio
-//so I can play around with formatting it.
-//I am trying to get this endpoint to return =
-// [{date: day, meals: [{meal_id: id, meal_name: name, foods: [food, food, food]}]}, [{meal_id: id, meal_name: name, foods: [food, food, food]}]}]
 app.get('/api/v1/dates/meals', (request, response) => {
   database('dates')
   .select(['dates.day', 'meals.id AS meal_id', 'meals.name AS meal_name', 'foods.* AS foods'])
