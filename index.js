@@ -212,7 +212,9 @@ app.post('/api/v1/dates', (request, response) => {
 });
 
 
-// Below endpoint keeps hitting the 404 error and won't actually get into the .then() sectio so I can play around with formatting it. I am trying to get this endpoint to return =
+// Below endpoint keeps hitting the 404 error and won't actually get into the .then() sectio
+//so I can play around with formatting it.
+//I am trying to get this endpoint to return =
 // [{date: day, meals: [{meal_id: id, meal_name: name, foods: [food, food, food]}]}, [{meal_id: id, meal_name: name, foods: [food, food, food]}]}]
 app.get('/api/v1/dates/meals', (request, response) => {
   database('dates')
@@ -224,10 +226,10 @@ app.get('/api/v1/dates/meals', (request, response) => {
     const result = [];
     dates.forEach(function(element) {
       const currentDay = {date: '', meals: ''}
+      const elementArray = [element]
         currentDay.date = element.day
-        currentDay.meals = formatData(element)
+        currentDay.meals = formatData(elementArray)
         result.push(currentDay)
-        eval(pry.it)
       });
     response.status(200).json(result);
   })
@@ -237,6 +239,7 @@ app.get('/api/v1/dates/meals', (request, response) => {
 });
 
 app.get('/api/v1/dates/:day/meals', (request, response) => {
+
   database('dates')
   .select(['dates.day', 'meals.id AS meal_id', 'meals.name AS meal_name', 'foods.* AS foods'])
   .join('meal_foods', 'dates.id', '=', 'meal_foods.date_id')
@@ -283,6 +286,12 @@ const formatData = (data) => {
       })
     return [breakfast, lunch, dinner, snack]
   }
+
+// const elementToArray = (data) => {
+//   const elementArray = []
+//
+// }
+
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
