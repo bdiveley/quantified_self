@@ -211,6 +211,28 @@ app.post('/api/v1/dates', (request, response) => {
     });
 });
 
+app.get('/api/v1/dates/meals', (request, response) => {
+  eval(pry.it)
+  database('dates')
+  .select(['dates.day', 'meals.id AS meal_id', 'meals.name AS meal_name', 'foods.* AS foods'])
+  .join('meal_foods', 'dates.id', '=', 'meal_foods.date_id')
+  .join('meals', 'meals.id', '=', 'meal_foods.meal_id')
+  .join('foods', 'foods.id', '=', 'meal_foods.food_id')
+    .then(dates => {
+      const result = [];
+      dates.forEach(function(element) {
+        const currentDay = {date: '', meals: ''}
+          currentDay.date = element.day
+          currentDay.meals = formatData(element)
+          result.push(currentDay)
+        });
+      response.status(200).json(result);
+    })
+    .catch((error) => {
+      response.status(404).json({ error });
+    });
+  });
+
 app.get('/api/v1/dates/:day/meals', (request, response) => {
   database('dates')
   .select(['dates.day', 'meals.id AS meal_id', 'meals.name AS meal_name', 'foods.* AS foods'])
