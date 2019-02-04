@@ -101,7 +101,7 @@ app.get('/api/v1/meals', (request, response) => {
   .join('meal_foods', 'meals.id', '=', 'meal_foods.meal_id')
   .join('foods', 'foods.id', '=', 'meal_foods.food_id')
     .then((meals) => {
-      const result = formatData(meals)
+      const result = formatMeals(meals)
       response.status(200).json(result);
     })
     .catch((error) => {
@@ -220,18 +220,34 @@ app.get('/api/v1/dates/meals', (request, response) => {
   .orderBy('dates.day', 'desc')
   .orderBy('meals.id', 'asc')
   .then(dates => {
-    const result = [];
+    var result = [];
     dates.forEach(function(element) {
-      const currentDay = {date: '', meals: ''}
-      const elementArray = [element]
-        currentDay.date = element.day
-        mealArray = formatData(elementArray)
-        mealArray.forEach(function(meal) {
-          if (meal.foods.length > 0) {
-            currentDay.meals = meal
-            result.push(currentDay)
+      var currentDay = {date: '', meals: ''}
+      var elementArray = [element]
+
+      if (result.length == 0) {
+        var currentDay = formatDates(currentDay, elementArray)
+        result.push(currentDay)
+      }
+      else {
+        var i = 0;
+        result.forEach(function(day) {
+          if (+day.date === +element.day) {
+            var mealArray = formatMeals(elementArray)
+            mealArray.forEach(function(meal) {
+              if (meal.foods.length > 0) {
+                day.meals.push([meal])
+              }
+            })
+          } else {
+            i++;
           }
         })
+          if (i === result.length) {
+            var currentDay = formatDates(currentDay, elementArray)
+            result.push(currentDay)
+          }
+        }
       });
     response.status(200).json(result);
   })
@@ -239,6 +255,17 @@ app.get('/api/v1/dates/meals', (request, response) => {
     response.status(404).json({ error });
   });
 });
+
+const formatDates = (currentDay, elementArray) => {
+  currentDay.date = elementArray[0].day
+  var mealArray = formatMeals(elementArray)
+  mealArray.forEach(function(meal) {
+    if (meal.foods.length > 0) {
+      currentDay.meals = [meal]
+    }
+  })
+  return currentDay;
+}
 
 app.get('/api/v1/dates/:day/meals', (request, response) => {
 
@@ -250,7 +277,7 @@ app.get('/api/v1/dates/:day/meals', (request, response) => {
   .where('dates.day', request.params.day)
     .then(date => {
       if (date.length > 0) {
-        const result = formatData(date)
+        const result = formatMeals(date)
         response.status(200).json(result);
       }
       else {
@@ -262,7 +289,7 @@ app.get('/api/v1/dates/:day/meals', (request, response) => {
     });
   });
 
-const formatData = (data) => {
+const formatMeals = (data) => {
   var breakfast = {"id": 1, "name": "Breakfast", "foods": []}
   var lunch = {"id": 2, "name": "Lunch", "foods": []}
   var dinner = {"id": 3, "name": "Dinner", "foods": []}
