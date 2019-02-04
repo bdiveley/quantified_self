@@ -306,13 +306,22 @@ describe('GET /api/v1/meals/:meal_id/foods', () => {
     //        done();
     //      });
     //    });
-     it('should return 404 if meal id does not exist', done => {
+     it('should return 200 if meal id does not exist', done => {
        chai.request(server)
-        .get('/api/v1/dates/2022-01-01/meals')
+        .get('/api/v1/dates/2019-01-03/meals')
         .end((err, response) => {
-          response.should.have.status(404);
+          response.should.have.status(200);
           done();
          });
        });
+
+      it('should return 404 if date id does not exist', done => {
+        chai.request(server)
+        .get('/api/v1/dates/2030-01-03/meals')
+        .end((err, response) => {
+          response.should.have.status(404);
+          done();
+        });
+      });
      })
 });

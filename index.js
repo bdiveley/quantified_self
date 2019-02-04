@@ -223,6 +223,10 @@ app.get('/api/v1/dates/:day/meals', (request, response) => {
         const result = formatData(date)
         response.status(200).json(result);
       }
+      else if (date.length == 0){
+        const result = formatData(date)
+        response.status(200).json(result);
+      }
       else {
         response.status(401).json({ error });
       }
