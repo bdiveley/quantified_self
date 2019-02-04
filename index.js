@@ -217,14 +217,21 @@ app.get('/api/v1/dates/meals', (request, response) => {
   .join('meal_foods', 'dates.id', '=', 'meal_foods.date_id')
   .join('meals', 'meals.id', '=', 'meal_foods.meal_id')
   .join('foods', 'foods.id', '=', 'meal_foods.food_id')
+  .orderBy('dates.day', 'desc')
+  .orderBy('meals.id', 'asc')
   .then(dates => {
     const result = [];
     dates.forEach(function(element) {
       const currentDay = {date: '', meals: ''}
       const elementArray = [element]
         currentDay.date = element.day
-        currentDay.meals = formatData(elementArray)
-        result.push(currentDay)
+        mealArray = formatData(elementArray)
+        mealArray.forEach(function(meal) {
+          if (meal.foods.length > 0) {
+            currentDay.meals = meal
+            result.push(currentDay)
+          }
+        })
       });
     response.status(200).json(result);
   })
@@ -281,12 +288,6 @@ const formatData = (data) => {
       })
     return [breakfast, lunch, dinner, snack]
   }
-
-// const elementToArray = (data) => {
-//   const elementArray = []
-//
-// }
-
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
