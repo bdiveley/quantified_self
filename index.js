@@ -268,7 +268,6 @@ const formatDates = (currentDay, elementArray) => {
 }
 
 app.get('/api/v1/dates/:day/meals', (request, response) => {
-
   database('dates')
   .select(['dates.day', 'meals.id AS meal_id', 'meals.name AS meal_name', 'foods.* AS foods'])
   .join('meal_foods', 'dates.id', '=', 'meal_foods.date_id')
@@ -281,8 +280,7 @@ app.get('/api/v1/dates/:day/meals', (request, response) => {
         response.status(200).json(result);
       }
       else if (date.length == 0){
-        const result = formatData(date)
-        response.status(200).json(result);
+        response.status(200).json("No saved meals");
       }
       else {
         response.status(401).json({ error });
