@@ -236,7 +236,7 @@ app.get('/api/v1/dates/meals', (request, response) => {
             var mealArray = formatMeals(elementArray)
             mealArray.forEach(function(meal) {
               if (meal.foods.length > 0) {
-                day.meals.push([meal])
+                day.meals.push(meal)
               }
             })
           } else {
