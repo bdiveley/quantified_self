@@ -314,14 +314,5 @@ describe('GET /api/v1/meals/:meal_id/foods', () => {
           done();
          });
        });
-
-      it('should return 404 if date id does not exist', done => {
-        chai.request(server)
-        .get('/api/v1/dates/2030-01-03/meals')
-        .end((err, response) => {
-          response.should.have.status(404);
-          done();
-        });
-      });
      })
 });
