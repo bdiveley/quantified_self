@@ -152,15 +152,15 @@ app.delete('/api/v1/meals/:meal_id/foods/:food_id', (request, response) => {
   });
 });
 
-// app.get('/api/v1/mealfoods', (request, response) => {
-//   database('meal_foods').select()
-//     .then(meal_foods => {
-//       response.status(201).json({ meal_foods})
-//     })
-//     .catch(error => {
-//       response.status(400).json({ error });
-//     });
-// });
+app.get('/api/v1/mealfoods', (request, response) => {
+  database('meal_foods').select()
+    .then(meal_foods => {
+      response.status(201).json({ meal_foods})
+    })
+    .catch(error => {
+      response.status(400).json({ error });
+    });
+});
 
 app.get('/api/v1/mealfoods/:id', (request, response) => {
   database('meal_foods').where('id', request.params.id).select()
